@@ -12,6 +12,9 @@ target_link_libraries(identity_object_example EIPScanner)
 add_executable(implicit_messaging ImplicitMessagingExample.cpp)
 target_link_libraries(implicit_messaging EIPScanner)
 
+add_executable(implicit_messaging_ifm ImplicitMessagingIFM.cpp)
+target_link_libraries(implicit_messaging_ifm EIPScanner)
+
 add_executable(parameter_object_example ParameterObjectExample.cpp)
 target_link_libraries(parameter_object_example EIPScanner)
 
