@@ -17,6 +17,7 @@ namespace eip {
 		CommonPacketItem createUnconnectedDataItem(const std::vector<uint8_t> &data) const;
 		CommonPacketItem createSequenceAddressItem(cip::CipUdint connectionId, cip::CipUdint seqNumber) const;
 		CommonPacketItem createConnectedDataItem(const std::vector<uint8_t> &data) const;
+        CommonPacketItem createT2OSockaddrInfo(cip::CipUint port, cip::CipUdint address) const;
 	};
 }
 }

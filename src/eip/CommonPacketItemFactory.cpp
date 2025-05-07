@@ -27,5 +27,11 @@ namespace eip {
 		buffer << connectionId << seqNumber;
 		return CommonPacketItem(CommonPacketItemIds::SEQUENCED_ADDRESS_ITEM, buffer.data());
 	}
+    CommonPacketItem
+    CommonPacketItemFactory::createT2OSockaddrInfo(cip::CipUint port, cip::CipUdint address) const {
+        Buffer buffer;
+        buffer << htons(cip::CipInt(2)) << htons(port) << htonl(address) << cip::CipUdint(0) << cip::CipUdint(0);
+        return CommonPacketItem(CommonPacketItemIds::T2O_SOCKADDR_INFO, buffer.data());
+    }
 }
 }

@@ -22,8 +22,8 @@ namespace eipScanner {
 	using eip::EncapsPacket;
 	using eip::EncapsPacketFactory;
 
-	MessageRouter::MessageRouter(bool use_8_bit_path_segments) 
-    : _use_8_bit_path_segments(use_8_bit_path_segments)
+	MessageRouter::MessageRouter(bool use_8_bit_path_segments, cip::CipUint implicit_port)
+    : _use_8_bit_path_segments(use_8_bit_path_segments), _implicit_port(implicit_port)
     {};
 
 	MessageRouter::~MessageRouter() = default;
@@ -47,7 +47,7 @@ namespace eipScanner {
 
 		CommonPacketItemFactory commonPacketItemFactory;
 		CommonPacket commonPacket;
-		commonPacket << commonPacketItemFactory.createNullAddressItem();
+        commonPacket << commonPacketItemFactory.createT2OSockaddrInfo(_implicit_port, 0);
 		commonPacket << commonPacketItemFactory.createUnconnectedDataItem(request.pack());
 
 		for(auto& item : additionalPacketItems) {
@@ -84,4 +84,9 @@ namespace eipScanner {
 	MessageRouter::sendRequest(SessionInfoIf::SPtr si, CipUsint service, const EPath &path) const {
 		return this->sendRequest(si, service, path, {}, {});
 	}
+
+    cip::CipUint
+    MessageRouter::implicitPort() const {
+        return _implicit_port;
+    }
 }
