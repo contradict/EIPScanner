@@ -27,9 +27,7 @@ namespace eipScanner {
 		/**
 		 * @brief Default constructor
 		 */
-		MessageRouter(bool use_8_bit_path_segments=false, cip::CipUint implicit_port=EIP_DEFAULT_IMPLICIT_PORT);
-		MessageRouter(cip::CipUint implicit_port) : MessageRouter(false, implicit_port){ };
-		MessageRouter(bool use_8_bit_path_segments) : MessageRouter(use_8_bit_path_segments, EIP_DEFAULT_IMPLICIT_PORT) {};
+		MessageRouter(bool use_8_bit_path_segments=false);
 
 		/**
 		 * @brief Default destructor
@@ -76,11 +74,8 @@ namespace eipScanner {
 		virtual cip::MessageRouterResponse sendRequest(SessionInfoIf::SPtr si, cip::CipUsint service,
 													   const cip::EPath& path) const;
 
-        cip::CipUint implicitPort() const;
-
     private:
         bool _use_8_bit_path_segments;
-        cip::CipUint _implicit_port;
 	};
 }
 

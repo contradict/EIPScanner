@@ -44,7 +44,7 @@ namespace eipScanner {
 		 * @param isLarge use large forward open if true
 		 * @return weak pointer to the created connection or nullptr if got an error
 		 */
-		IOConnection::WPtr forwardOpen(const SessionInfoIf::SPtr& si, cip::connectionManager::ConnectionParameters connectionParameters, bool isLarge = false);
+		IOConnection::WPtr forwardOpen(const SessionInfoIf::SPtr& si, cip::connectionManager::ConnectionParameters connectionParameters, bool isLarge = false, cip::CipUint implicit_port=EIP_DEFAULT_IMPLICIT_PORT);
 
 		/**
 		 * @brief Opens an EIP IO connection with the EIP adapter

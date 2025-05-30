@@ -7,6 +7,7 @@
 #include <random>
 
 #include "ConnectionManager.h"
+#include "eip/CommonPacketItemFactory.h"
 #include "eip/CommonPacket.h"
 #include "cip/connectionManager/ForwardOpenRequest.h"
 #include "cip/connectionManager/ForwardCloseRequest.h"
@@ -50,7 +51,7 @@ namespace eipScanner {
 	ConnectionManager::~ConnectionManager() = default;
 
 	IOConnection::WPtr
-	ConnectionManager::forwardOpen(const SessionInfoIf::SPtr& si, ConnectionParameters connectionParameters, bool isLarge) {
+	ConnectionManager::forwardOpen(const SessionInfoIf::SPtr& si, ConnectionParameters connectionParameters, bool isLarge, cip::CipUint implicit_port) {
 		static int serialNumberCount = 0;
 		connectionParameters.connectionSerialNumber = ++serialNumberCount;
 
@@ -87,17 +88,18 @@ namespace eipScanner {
 			connectionParameters.t2oNetworkConnectionParams += 4;
 		}
 
+        eip::CommonPacketItemFactory commonPacketItemFactory;
 		MessageRouterResponse messageRouterResponse;
 		if (isLarge) {
 			LargeForwardOpenRequest request(connectionParameters);
 			messageRouterResponse = _messageRouter->sendRequest(si,
 				static_cast<cip::CipUsint>(ConnectionManagerServiceCodes::LARGE_FORWARD_OPEN),
-				EPath(6, 1), request.pack(), {});
+				EPath(6, 1), request.pack(), {commonPacketItemFactory.createT2OSockaddrInfo(implicit_port, 0)});
 		} else {
 			ForwardOpenRequest request(connectionParameters);
 			messageRouterResponse = _messageRouter->sendRequest(si,
 				static_cast<cip::CipUsint>(ConnectionManagerServiceCodes::FORWARD_OPEN),
-				EPath(6, 1), request.pack(), {});
+				EPath(6, 1), request.pack(), {commonPacketItemFactory.createT2OSockaddrInfo(implicit_port, 0)});
 		}
 
 		IOConnection::SPtr ioConnection;
@@ -145,13 +147,13 @@ namespace eipScanner {
 				}
 
 			} else {
-				ioConnection->_socket = std::make_unique<UDPSocket>(si->getRemoteEndPoint().getHost(), _messageRouter->implicitPort());
+				ioConnection->_socket = std::make_unique<UDPSocket>(si->getRemoteEndPoint().getHost(), implicit_port);
 			}
 
 			Logger(LogLevel::INFO) << "Open UDP socket to send data to "
 					<< ioConnection->_socket->getRemoteEndPoint().toString();
 
-			findOrCreateSocket(sockets::EndPoint(si->getRemoteEndPoint().getHost(), _messageRouter->implicitPort()));
+			findOrCreateSocket(sockets::EndPoint(si->getRemoteEndPoint().getHost(), implicit_port));
 
 			auto result = _connectionMap
 					.insert(std::make_pair(response.getT2ONetworkConnectionId(), ioConnection));
